@@ -1,8 +1,8 @@
 'use client';
 
-import { useFormState, useFormStatus } from 'react-dom';
+import { useActionState, useEffect, useRef } from 'react';
+import { useFormStatus } from 'react-dom';
 import { generateSoundscapeAction } from '@/app/actions';
-import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
@@ -31,7 +31,7 @@ function SubmitButton() {
 }
 
 export default function AiSoundscapeGenerator({ onGenerationComplete }: AiSoundscapeGeneratorProps) {
-  const [state, formAction] = useFormState(generateSoundscapeAction, initialState);
+  const [state, formAction] = useActionState(generateSoundscapeAction, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
