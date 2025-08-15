@@ -45,12 +45,12 @@ export default function SoundscapeList({ soundscapes, currentSoundscape, onSelec
   const custom = soundscapes.filter(s => s.isCustom);
 
   return (
-    <Card className="h-[calc(100vh-12rem)] flex flex-col">
+    <Card>
       <CardHeader>
         <CardTitle>Soundscapes</CardTitle>
       </CardHeader>
-      <CardContent className="p-0 flex-grow">
-        <ScrollArea className="h-full">
+      <CardContent className="p-0">
+        <ScrollArea className="h-[400px]">
           <div className="p-4 pt-0 space-y-6">
             <div>
               <h3 className="text-base font-semibold mb-2 px-3 text-muted-foreground">Curated</h3>
