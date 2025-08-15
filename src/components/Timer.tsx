@@ -7,66 +7,87 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 
+const DEFAULT_MINUTES = 25;
+
 export default function Timer() {
-  const [minutes, setMinutes] = useState(25);
-  const [timeLeft, setTimeLeft] = useState(25 * 60);
+  // FIX: Consolidated state management (duration and timeLeft in seconds)
+  const [duration, setDuration] = useState(DEFAULT_MINUTES * 60);
+  const [timeLeft, setTimeLeft] = useState(DEFAULT_MINUTES * 60);
   const [isActive, setIsActive] = useState(false);
-  const timerId = useRef<NodeJS.Timeout | null>(null);
+  // FIX: Refs for accurate timing using Date.now() and requestAnimationFrame (rAF)
+  const endTimeRef = useRef<number | null>(null);
+  const animationFrameRef = useRef<number>();
+
+  // FIX: Function to update the time left based on Date.now() (prevents drift)
+  const updateTimer = useCallback(() => {
+    if (!isActive || !endTimeRef.current) return;
+
+    const now = Date.now();
+    const remaining = Math.max(0, Math.round((endTimeRef.current - now) / 1000));
+
+    setTimeLeft(remaining);
+
+    if (remaining === 0) {
+      setIsActive(false);
+      endTimeRef.current = null;
+    } else {
+      animationFrameRef.current = requestAnimationFrame(updateTimer);
+    }
+  }, [isActive]);
+
+  // FIX: Effect to manage the animation frame loop
+  useEffect(() => {
+    if (isActive) {
+      animationFrameRef.current = requestAnimationFrame(updateTimer);
+    }
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [isActive, updateTimer]);
+
+  const startTimer = () => {
+    if (timeLeft > 0 && !isActive) {
+      endTimeRef.current = Date.now() + timeLeft * 1000;
+      setIsActive(true);
+    }
+  };
 
   const pauseTimer = useCallback(() => {
     setIsActive(false);
-    if (timerId.current) {
-      clearInterval(timerId.current);
-    }
+    endTimeRef.current = null;
   }, []);
-
-  useEffect(() => {
-    if (isActive) {
-      timerId.current = setInterval(() => {
-        setTimeLeft((prevTime) => {
-          if (prevTime <= 1) {
-            pauseTimer();
-            // Optional: play a sound or show a notification
-            return 0;
-          }
-          return prevTime - 1;
-        });
-      }, 1000);
-    }
-    return () => {
-      if (timerId.current) {
-        clearInterval(timerId.current);
-      }
-    };
-  }, [isActive, pauseTimer]);
-  
-  const startTimer = () => setIsActive(true);
 
   const resetTimer = useCallback(() => {
     pauseTimer();
-    setTimeLeft(minutes * 60);
-  }, [minutes, pauseTimer]);
+    setTimeLeft(duration);
+  }, [duration, pauseTimer]);
 
   const handleMinutesChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newMinutes = parseInt(e.target.value, 10);
+    let newDuration = 0;
+
     if (!isNaN(newMinutes) && newMinutes >= 0) {
-      pauseTimer();
-      setMinutes(newMinutes);
-      setTimeLeft(newMinutes * 60);
+      newDuration = newMinutes * 60;
     } else if (e.target.value === '') {
-      pauseTimer();
-      setMinutes(0);
-      setTimeLeft(0);
+      newDuration = 0;
+    } else {
+      return;
     }
+
+    pauseTimer();
+    setDuration(newDuration);
+    setTimeLeft(newDuration);
   }
 
   const displayMinutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
   const displaySeconds = String(timeLeft % 60).padStart(2, '0');
+  const inputMinutesValue = duration / 60;
 
   useEffect(() => {
     document.title = isActive ? `FocusFlow | ${displayMinutes}:${displaySeconds}` : 'FocusFlow';
   }, [timeLeft, isActive, displayMinutes, displaySeconds]);
-
 
   return (
     <Card>
@@ -80,13 +101,13 @@ export default function Timer() {
         <div className="w-full max-w-xs">
           <Label htmlFor="minutes" className="text-muted-foreground text-sm font-medium mb-2 block text-center">Set Duration (minutes)</Label>
           <div className="flex items-center justify-center">
-            <Input id="minutes" type="number" value={minutes} onChange={handleMinutesChange} className="w-32 text-center" min="0" />
+            <Input id="minutes" type="number" value={inputMinutesValue} onChange={handleMinutesChange} className="w-32 text-center" min="0" step="1" />
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button onClick={isActive ? pauseTimer : startTimer} size="lg" className="w-32 rounded-full">
+          <Button onClick={isActive ? pauseTimer : startTimer} size="lg" className="w-32 rounded-full" disabled={duration === 0}>
             {isActive ? <Pause className="mr-2 h-5 w-5" /> : <Play className="mr-2 h-5 w-5" />}
-            {isActive ? 'Pause' : 'Start'}
+            {isActive ? 'Pause' : (timeLeft === duration ? 'Start' : 'Resume')}
           </Button>
           <Button onClick={resetTimer} variant="outline" size="icon" className="rounded-full" aria-label="Reset timer">
             <RotateCcw className="h-5 w-5" />
