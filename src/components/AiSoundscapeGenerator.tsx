@@ -15,7 +15,10 @@ interface AiSoundscapeGeneratorProps {
   onGenerationComplete: (soundscape: Soundscape) => void;
 }
 
-const initialState = {
+const initialState: {
+  error?: string | null;
+  data?: GenerateSoundscapeOutput | null;
+} = {
   error: null,
   data: null,
 };
