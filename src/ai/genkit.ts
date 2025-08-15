@@ -1,15 +1,11 @@
-// FIX: Modernized Genkit initialization
-import { initializeGenkit } from '@genkit-ai/core';
+// FIX: Modernized Genkit initialization using the primary `genkit` entry point
+import { genkit } from 'genkit';
 import { googleAI, gemini15Flash } from '@genkit-ai/googleai';
 
 // Initialize Genkit configuration
-export const config = initializeGenkit({
-  plugins: [googleAI()],
-  flow: {
-    sincerity: true, // Recommended for production flows
-  },
-  // Enable tracing/metrics only in development
-  enableTracingAndMetrics: process.env.NODE_ENV !== 'production',
+export const ai = genkit({
+  plugins: [googleAI()],
+  // Tracing and metrics can be enabled via environment or plugin configuration
 });
 
 // Export the specific model reference (Gemini 1.5 Flash)
