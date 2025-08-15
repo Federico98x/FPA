@@ -1,13 +1,23 @@
 'use server';
 
-import { generateSoundscape, GenerateSoundscapeInput } from '@/ai/flows/generate-soundscape';
+import { generateSoundscape, GenerateSoundscapeInput, GenerateSoundscapeOutput } from '@/ai/flows/generate-soundscape';
 import { z } from 'zod';
+
+export type GenerationState = {
+  data: GenerateSoundscapeOutput | null;
+  error: string | null;
+};
+
+export const initialState: GenerationState = {
+  data: null,
+  error: null,
+};
 
 const inputSchema = z.object({
   moodDescription: z.string().min(3, 'Please describe your mood a bit more.'),
 });
 
-export async function generateSoundscapeAction(prevState: any, formData: FormData) {
+export async function generateSoundscapeAction(prevState: GenerationState, formData: FormData): Promise<GenerationState> {
   const validatedFields = inputSchema.safeParse({
     moodDescription: formData.get('moodDescription'),
   });

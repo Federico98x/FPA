@@ -2,40 +2,41 @@
 
 import { useActionState, useEffect, useRef } from 'react';
 import { useFormStatus } from 'react-dom';
-import { generateSoundscapeAction } from '@/app/actions';
+// FIX: Import types and initialState from actions
+import { generateSoundscapeAction, initialState, GenerationState } from '@/app/actions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
 import { LoaderCircle, Sparkles } from 'lucide-react';
 import type { Soundscape } from '@/lib/types';
-import type { GenerateSoundscapeOutput } from '@/ai/flows/generate-soundscape';
 
 interface AiSoundscapeGeneratorProps {
   onGenerationComplete: (soundscape: Soundscape) => void;
 }
 
-const initialState = {
-  error: null,
-  data: null,
-};
-
 function SubmitButton() {
-  const { pending } = useFormStatus();
-  return (
-    <Button type="submit" disabled={pending} className="rounded-full">
-      {pending ? <LoaderCircle className="animate-spin mr-2" /> : <Sparkles className="mr-2" />}
-      Generate
-    </Button>
-  );
+    const { pending } = useFormStatus();
+    return (
+        <Button type="submit" disabled={pending} className="w-full">
+        {pending ? (
+            <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+            <Sparkles className="mr-2 h-4 w-4" />
+        )}
+        Generate Mix
+        </Button>
+    );
 }
 
 export default function AiSoundscapeGenerator({ onGenerationComplete }: AiSoundscapeGeneratorProps) {
-  const [state, formAction] = useActionState(generateSoundscapeAction, initialState);
+  // FIX: Explicitly type the state
+  const [state, formAction] = useActionState<GenerationState, FormData>(generateSoundscapeAction, initialState);
   const { toast } = useToast();
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
+    // FIX: TypeScript now correctly understands state types
     if (state.error) {
       toast({
         variant: 'destructive',
@@ -44,13 +45,14 @@ export default function AiSoundscapeGenerator({ onGenerationComplete }: AiSounds
       });
     }
     if (state.data) {
-      const result = state.data as GenerateSoundscapeOutput;
+      const result = state.data;
+      // FIX: Adapt to the new structured output (name and array mix)
       const newSoundscape: Soundscape = {
         id: `ai-${Date.now()}`,
-        name: `AI: ${result.soundscapeMix.split(',')[0].trim()}`,
+        name: result.soundscapeName, // Use the AI-generated name
         category: 'ai',
         description: result.soundscapeDescription,
-        mix: result.soundscapeMix,
+        mix: result.soundscapeMix, // Mix is now an array
         isCustom: false,
       };
       onGenerationComplete(newSoundscape);
