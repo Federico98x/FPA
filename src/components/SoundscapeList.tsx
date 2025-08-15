@@ -50,7 +50,7 @@ export default function SoundscapeList({ soundscapes, currentSoundscape, onSelec
         <CardTitle>Soundscapes</CardTitle>
       </CardHeader>
       <CardContent className="p-0 flex-grow">
-        <ScrollArea className="h-full max-h-[calc(100vh-250px)] lg:max-h-full">
+        <ScrollArea className="h-full">
           <div className="p-4 pt-0 space-y-6">
             <div>
               <h3 className="text-base font-semibold mb-2 px-3 text-muted-foreground">Curated</h3>
