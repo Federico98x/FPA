@@ -17,7 +17,7 @@ const AvailableSounds = z.enum([
   'Vinyl Crackle',
   'Synth Pad',
   'Seagulls',
-]);
+] as const);
 
 const GenerateSoundscapeInputSchema = z.object({
   moodDescription: z
@@ -55,7 +55,7 @@ export const generateSoundscapeFlow = ai.defineFlow(
     Mood description: ${input.moodDescription}
 
     Available Sounds Vocabulary:
-    ${Object.values(AvailableSounds.Values).join(', ')}
+    ${AvailableSounds.options.join(', ')}
 
     Instructions:
     1. Analyze the mood.
