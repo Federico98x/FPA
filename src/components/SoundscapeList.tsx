@@ -45,7 +45,7 @@ export default function SoundscapeList({ soundscapes, currentSoundscape, onSelec
   const custom = soundscapes.filter(s => s.isCustom);
 
   return (
-    <Card className="h-full flex flex-col">
+    <Card className="h-[calc(100vh-12rem)] flex flex-col">
       <CardHeader>
         <CardTitle>Soundscapes</CardTitle>
       </CardHeader>
