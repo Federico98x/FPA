@@ -1,17 +1,18 @@
-import type {Config} from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 
 export default {
-  // ... (darkMode, content)
-  theme: {
-    extend: {
-      fontFamily: {
+  darkMode: ['class'],
+  content: ['./src/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
         // FIX: Use the CSS variable defined in layout.tsx
-        body: ['var(--font-inter)', 'sans-serif'],
-        headline: ['var(--font-inter)', 'sans-serif'],
-        code: ['monospace'],
-      },
+        body: ['var(--font-inter)', 'sans-serif'],
+        headline: ['var(--font-inter)', 'sans-serif'],
+        code: ['monospace'],
+      },
       // ... (colors, borderRadius, keyframes, animation remain the same)
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config;

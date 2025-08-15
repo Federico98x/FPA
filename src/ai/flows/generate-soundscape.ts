@@ -4,11 +4,8 @@
  * @fileOverview Generates a soundscape based on the user's mood description.
  */
 
-// FIX: Import from modernized Genkit packages
-import { defineFlow } from '@genkit-ai/flow';
-import { generate } from '@genkit-ai/ai';
 import { z } from 'zod';
-import { model } from '@/ai/genkit'; // Import the model reference
+import { ai, model } from '@/ai/genkit'; // Import the Genkit instance and model reference
 
 // FIX: Define the available sound assets vocabulary (Crucial for mapping to audio files)
 const AvailableSounds = z.enum([
@@ -45,13 +42,13 @@ const GenerateSoundscapeOutputSchema = z.object({
 export type GenerateSoundscapeOutput = z.infer<typeof GenerateSoundscapeOutputSchema>;
 
 // FIX: Define the flow using the modern approach
-export const generateSoundscapeFlow = defineFlow(
-  {
-    name: 'generateSoundscapeFlow',
-    inputSchema: GenerateSoundscapeInputSchema,
-    outputSchema: GenerateSoundscapeOutputSchema,
-  },
-  async (input) => {
+export const generateSoundscapeFlow = ai.defineFlow(
+  {
+    name: 'generateSoundscapeFlow',
+    inputSchema: GenerateSoundscapeInputSchema,
+    outputSchema: GenerateSoundscapeOutputSchema,
+  },
+  async (input: GenerateSoundscapeInput) => {
     // FIX: Improved prompt engineering for structured, constrained output
     const prompt = `You are an expert sound designer creating focus soundscapes.
 
@@ -70,8 +67,8 @@ export const generateSoundscapeFlow = defineFlow(
     Ensure the output strictly adheres to the required JSON schema.
     `;
 
-    // FIX: Use the 'generate' function
-    const result = await generate({
+    // FIX: Use the 'generate' function from the Genkit instance
+    const { output } = await ai.generate({
       model: model,
       prompt: prompt,
       output: { schema: GenerateSoundscapeOutputSchema },
@@ -80,8 +77,10 @@ export const generateSoundscapeFlow = defineFlow(
       }
     });
 
-    return result.output();
-  }
+    if (!output) throw new Error('Failed to generate soundscape');
+
+    return output;
+  }
 );
 
 // Helper function for server action compatibility
