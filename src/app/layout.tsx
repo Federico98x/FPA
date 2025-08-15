@@ -1,7 +1,15 @@
 import type {Metadata} from 'next';
+import { Inter } from 'next/font/google'; // FIX: Import Inter
 import { Toaster } from "@/components/ui/toaster";
 import { cn } from "@/lib/utils";
 import './globals.css';
+
+// FIX: Configure the font using next/font/google and CSS variables
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
 
 export const metadata: Metadata = {
   title: 'FocusFlow',
@@ -14,12 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
-      </head>
+    // FIX: Apply the font variable class to html
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
+      {/* FIX: Removed manual <link> tags from <head> */}
       <body className={cn("font-body antialiased")}>
         {children}
         <Toaster />
