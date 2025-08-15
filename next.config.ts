@@ -3,25 +3,25 @@ import type {NextConfig} from 'next';
 const isDev = process.env.NODE_ENV !== 'production';
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  typescript: {
+  /* config options here */
+  typescript: {
     // FIX: Enforce type checking for stability.
-    ignoreBuildErrors: false,
-  },
-  eslint: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
     // FIX: Enforce linting for code quality.
-    ignoreDuringBuilds: false,
-  },
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'placehold.co',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-  },
+    ignoreDuringBuilds: false,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'placehold.co',
+        port: '',
+        pathname: '/**',
+      },
+    ],
+  },
   // ENHANCEMENT: Add basic security headers for production
   async headers() {
     if (isDev) return [];

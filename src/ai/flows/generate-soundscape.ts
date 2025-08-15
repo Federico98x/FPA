@@ -1,7 +1,9 @@
 'use server';
+
 /**
- * @fileOverview Generates a soundscape based on the user's mood description.
- */
+ * @fileOverview Generates a soundscape based on the user's mood description.
+ */
+
 // FIX: Import from modernized Genkit packages
 import { defineFlow } from '@genkit-ai/flow';
 import { generate } from '@genkit-ai/ai';
@@ -21,35 +23,35 @@ const AvailableSounds = z.enum([
 ]);
 
 const GenerateSoundscapeInputSchema = z.object({
-  moodDescription: z
-    .string()
-    .describe('A description of the user\'s mood.'),
+  moodDescription: z
+    .string()
+    .describe('A description of the user\'s mood.'),
 });
 export type GenerateSoundscapeInput = z.infer<typeof GenerateSoundscapeInputSchema>;
 
 // FIX: Refactored Output Schema for structured data and constrained vocabulary
 const GenerateSoundscapeOutputSchema = z.object({
   soundscapeName: z
-    .string()
-    .describe('A short, evocative name for the generated soundscape.'),
-  soundscapeDescription: z
-    .string()
-    .describe('A description of the generated soundscape.'),
+    .string()
+    .describe('A short, evocative name for the generated soundscape.'),
+  soundscapeDescription: z
+    .string()
+    .describe('A description of the generated soundscape.'),
   // FIX: Changed to array of constrained sounds
-  soundscapeMix: z
-    .array(AvailableSounds)
-    .describe('A list of sound elements to include in the mix, from the vocabulary.'),
+  soundscapeMix: z
+    .array(AvailableSounds)
+    .describe('A list of sound elements to include in the mix, from the vocabulary.'),
 });
 export type GenerateSoundscapeOutput = z.infer<typeof GenerateSoundscapeOutputSchema>;
 
 // FIX: Define the flow using the modern approach
 export const generateSoundscapeFlow = defineFlow(
-  {
-    name: 'generateSoundscapeFlow',
-    inputSchema: GenerateSoundscapeInputSchema,
-    outputSchema: GenerateSoundscapeOutputSchema,
-  },
-  async (input) => {
+  {
+    name: 'generateSoundscapeFlow',
+    inputSchema: GenerateSoundscapeInputSchema,
+    outputSchema: GenerateSoundscapeOutputSchema,
+  },
+  async (input) => {
     // FIX: Improved prompt engineering for structured, constrained output
     const prompt = `You are an expert sound designer creating focus soundscapes.
 
@@ -78,11 +80,11 @@ export const generateSoundscapeFlow = defineFlow(
       }
     });
 
-    return result.output();
-  }
+    return result.output();
+  }
 );
 
 // Helper function for server action compatibility
 export async function generateSoundscape(input: GenerateSoundscapeInput): Promise<GenerateSoundscapeOutput> {
-  return generateSoundscapeFlow(input);
+  return generateSoundscapeFlow(input);
 }
