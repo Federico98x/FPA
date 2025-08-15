@@ -12,23 +12,23 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'FocusFlow',
-  description: 'A minimalist music app designed to enhance focus during study sessions.',
+  title: 'FocusFlow',
+  description: 'A minimalist music app designed to enhance focus during study sessions.',
 };
 
 export default function RootLayout({
-  children,
+  children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode;
 }>) {
-  return (
+  return (
     // FIX: Apply the font variable class to html
-    <html lang="en" suppressHydrationWarning className={inter.variable}>
+    <html lang="en" suppressHydrationWarning className={inter.variable}>
       {/* FIX: Removed manual <link> tags from <head> */}
-      <body className={cn("font-body antialiased")}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
-  );
+      <body className={cn("font-body antialiased")}>
+        {children}
+        <Toaster />
+      </body>
+    </html>
+  );
 }
